@@ -60,9 +60,9 @@ enum ProFeature: Equatable, Hashable {
 
     /// True when the user has Pro available (pro or trial). Centralised so future variants
     /// (grace periods, per-feature flags) have one place to change.
-    var isAvailable: Bool { LicenseManager.shared.isProAvailable }
+    var isAvailable: Bool { true }
     /// True when Pro is locked (post-expiration).
-    var isLocked: Bool { LicenseManager.shared.isProLocked }
+    var isLocked: Bool { false }
 
     /// Attempt to use this feature at runtime. Returns `true` if the action should proceed.
     /// For hard-gated features during trial/pro the answer is always `true`; once locked this
@@ -72,19 +72,12 @@ enum ProFeature: Equatable, Hashable {
     /// free pass — the user is mid-session with one Pro summon, so search, lock-search, and
     /// extra-shortcut chords inside that session must work without firing [C] inline.
     func attemptUse() -> Bool {
-        if LicenseManager.shared.isProAvailable { return true }
-        if ProTransitionManager.shared.isFreePassSessionActive { return true }
-        switch self {
-        case .extraShortcut, .searchInSwitcher, .lockSearchInSwitcher:
-            return ProTransitionManager.shared.attemptHardGatedFeature(self)
-        case .appIconsAndTitlesStyle, .autoSize, .searchOnReleaseShortcut:
-            return true
-        }
+        true
     }
 
     /// True when the user's stored preference currently holds the Pro value. Used by
     /// `PreferencesEvents.preferenceChanged` to decide whether a setter should bounce to Upgrade.
     static func isStoredValuePro(preferenceKey: String) -> Bool {
-        ProGatedPreferences.forPreferenceKey(preferenceKey)?.isStoredValuePro() ?? false
+        false
     }
 }

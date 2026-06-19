@@ -1,3 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-DerivedData/Build/Products/Debug/AltTab.app/Contents/MacOS/AltTab --logs=debug --benchmark showUi 3
+set -euo pipefail
+
+open -n DerivedData/Build/Products/Debug/AltTab.app --args --logs=debug --benchmark showUi 3

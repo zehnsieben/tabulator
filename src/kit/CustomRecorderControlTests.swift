@@ -65,7 +65,7 @@ final class CustomRecorderControlTests: XCTestCase {
         XCTAssertEqual(CustomRecorderControlTestable.isShortcutAcceptable("nextWindowShortcut", Shortcut(keyEquivalent: "→")!),
             .conflictWithExistingShortcut(shortcutAlreadyAssigned: "→"))
         // same mechanism covers the static locals (Space = focus selected window)
-        XCTAssertEqual(CustomRecorderControlTestable.isShortcutAcceptable("nextWindowShortcut", Shortcut(keyEquivalent: " ")!),
+        XCTAssertEqual(CustomRecorderControlTestable.isShortcutAcceptable("nextWindowShortcut", TestShortcuts.fromKeyEquivalent(" ")),
             .conflictWithExistingShortcut(shortcutAlreadyAssigned: "focusWindowShortcut"))
         // a press that collides with nothing stays accepted
         XCTAssertEqual(CustomRecorderControlTestable.isShortcutAcceptable("nextWindowShortcut", Shortcut(keyEquivalent: "t")!), .accepted)

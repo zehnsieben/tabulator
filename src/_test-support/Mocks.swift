@@ -1,6 +1,21 @@
 import Cocoa
 import ShortcutRecorder
 
+enum TestShortcuts {
+    static func fromKeyEquivalent(_ keyEquivalent: String) -> Shortcut {
+        if keyEquivalent == " " {
+            return Shortcut(code: KeyCode.space, modifierFlags: [], characters: " ", charactersIgnoringModifiers: " ")
+        }
+        if keyEquivalent == "`" {
+            return Shortcut(code: KeyCode.ansiGrave, modifierFlags: [], characters: "`", charactersIgnoringModifiers: "`")
+        }
+        guard let shortcut = Shortcut(keyEquivalent: keyEquivalent) else {
+            fatalError("Invalid test shortcut keyEquivalent: \(keyEquivalent)")
+        }
+        return shortcut
+    }
+}
+
 // Stubs so ProBadgeView.swift compiles in the test target. The real Symbols
 // enum and NSImage.fromSymbol live in TileFontIconView.swift and
 // HelperExtensions.swift respectively, neither of which is in the test
@@ -161,28 +176,28 @@ class ControlsTab {
     // 2. nextWindowShortcut/nextWindowShortcut2 are stored RAW (⇥, `) while production stores
     //    them COMBINED with their hold (⌥⇥, ⌥`).
     static let defaultShortcuts = [
-        "holdShortcut": ATShortcut(Shortcut(keyEquivalent: "⌥")!, "holdShortcut", .global, .up, 0),
-        "holdShortcut2": ATShortcut(Shortcut(keyEquivalent: "⌥")!, "holdShortcut2", .global, .up, 1),
-        "holdShortcut3": ATShortcut(Shortcut(keyEquivalent: "⌥")!, "holdShortcut3", .global, .up, 2),
-        "nextWindowShortcut": ATShortcut(Shortcut(keyEquivalent: "⇥")!, "nextWindowShortcut", .global, .down),
-        "nextWindowShortcut2": ATShortcut(Shortcut(keyEquivalent: "`")!, "nextWindowShortcut2", .global, .down),
-        "→": ATShortcut(Shortcut(keyEquivalent: "→")!, "→", .local, .down),
-        "←": ATShortcut(Shortcut(keyEquivalent: "←")!, "←", .local, .down),
-        "↑": ATShortcut(Shortcut(keyEquivalent: "↑")!, "↑", .local, .down),
-        "↓": ATShortcut(Shortcut(keyEquivalent: "↓")!, "↓", .local, .down),
+        "holdShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("⌥"), "holdShortcut", .global, .up, 0),
+        "holdShortcut2": ATShortcut(TestShortcuts.fromKeyEquivalent("⌥"), "holdShortcut2", .global, .up, 1),
+        "holdShortcut3": ATShortcut(TestShortcuts.fromKeyEquivalent("⌥"), "holdShortcut3", .global, .up, 2),
+        "nextWindowShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("⇥"), "nextWindowShortcut", .global, .down),
+        "nextWindowShortcut2": ATShortcut(TestShortcuts.fromKeyEquivalent("`"), "nextWindowShortcut2", .global, .down),
+        "→": ATShortcut(TestShortcuts.fromKeyEquivalent("→"), "→", .local, .down),
+        "←": ATShortcut(TestShortcuts.fromKeyEquivalent("←"), "←", .local, .down),
+        "↑": ATShortcut(TestShortcuts.fromKeyEquivalent("↑"), "↑", .local, .down),
+        "↓": ATShortcut(TestShortcuts.fromKeyEquivalent("↓"), "↓", .local, .down),
 //        "vimCycleRight": ATShortcut(Shortcut(keyEquivalent: "l")!, "vimCycleRight", .local, .down),
 //        "vimCycleLeft": ATShortcut(Shortcut(keyEquivalent: "h")!, "vimCycleLeft", .local, .down),
 //        "vimCycleUp": ATShortcut(Shortcut(keyEquivalent: "k")!, "vimCycleUp", .local, .down),
 //        "vimCycleDown": ATShortcut(Shortcut(keyEquivalent: "j")!, "vimCycleDown", .local, .down),
-        "focusWindowShortcut": ATShortcut(Shortcut(keyEquivalent: " ")!, "focusWindowShortcut", .local, .down),
-        "previousWindowShortcut": ATShortcut(Shortcut(keyEquivalent: "⇧")!, "previousWindowShortcut", .local, .down),
-        "cancelShortcut": ATShortcut(Shortcut(keyEquivalent: "⎋")!, "cancelShortcut", .local, .down),
-        "searchShortcut": ATShortcut(Shortcut(keyEquivalent: "s")!, "searchShortcut", .local, .down),
-        "closeWindowShortcut": ATShortcut(Shortcut(keyEquivalent: "w")!, "closeWindowShortcut", .local, .down),
-        "minDeminWindowShortcut": ATShortcut(Shortcut(keyEquivalent: "m")!, "minDeminWindowShortcut", .local, .down),
-        "toggleFullscreenWindowShortcut": ATShortcut(Shortcut(keyEquivalent: "f")!, "toggleFullscreenWindowShortcut", .local, .down),
-        "quitAppShortcut": ATShortcut(Shortcut(keyEquivalent: "q")!, "quitAppShortcut", .local, .down),
-        "hideShowAppShortcut": ATShortcut(Shortcut(keyEquivalent: "h")!, "hideShowAppShortcut", .local, .down),
+        "focusWindowShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent(" "), "focusWindowShortcut", .local, .down),
+        "previousWindowShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("⇧"), "previousWindowShortcut", .local, .down),
+        "cancelShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("⎋"), "cancelShortcut", .local, .down),
+        "searchShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("s"), "searchShortcut", .local, .down),
+        "closeWindowShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("w"), "closeWindowShortcut", .local, .down),
+        "minDeminWindowShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("m"), "minDeminWindowShortcut", .local, .down),
+        "toggleFullscreenWindowShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("f"), "toggleFullscreenWindowShortcut", .local, .down),
+        "quitAppShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("q"), "quitAppShortcut", .local, .down),
+        "hideShowAppShortcut": ATShortcut(TestShortcuts.fromKeyEquivalent("h"), "hideShowAppShortcut", .local, .down),
     ]
     static var shortcuts = defaultShortcuts
 

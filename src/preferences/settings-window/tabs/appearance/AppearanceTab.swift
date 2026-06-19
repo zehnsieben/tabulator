@@ -476,7 +476,6 @@ class AppearanceTab: NSObject {
             ControlsTab.syncOverrideControlsToGlobal()
             refreshAllOverrideInfoLabels()
         })
-        wrapAppearanceSizeProLockIntercept(sizeControl)
         sizeControlRef = sizeControl
         let autoOverlay = addProBadgeToAutoSegment(sizeControl)
         autoSegmentOverlayRef = autoOverlay
@@ -570,7 +569,6 @@ class AppearanceTab: NSObject {
             ControlsTab.syncOverrideControlsToGlobal()
             refreshAllOverrideInfoLabels()
         })
-        wrapShortcutStyleProLockIntercept(control, proIndex: proIndex)
         shortcutStyleControlRef = control
         let shortcutStyleOverlay = addProBadgeToShortcutStyleSegment(control, proIndex: proIndex)
         shortcutStyleSegmentOverlayRef = shortcutStyleOverlay
@@ -580,21 +578,6 @@ class AppearanceTab: NSObject {
         }
         table.addRow(leftText: AppearanceTab.labelShortcutStyle,
             rightViews: [control, makeOverrideIcon("shortcutStyleOverride")])
-    }
-
-    private static func wrapShortcutStyleProLockIntercept(_ control: NSSegmentedControl, proIndex: Int) {
-        let original = control.onAction
-        control.onAction = { c in
-            let segmented = c as! NSSegmentedControl
-            if segmented.selectedSegment == proIndex && LicenseManager.shared.isProLocked {
-                let stored: ShortcutStylePreference = CachedUserDefaults.macroPref("shortcutStyle", ShortcutStylePreference.allCases)
-                segmented.selectedSegment = stored.index
-                refreshShortcutStyleSegmentAppearance(segmented)
-                UpgradeTab.navigateToUpgradeTab()
-                return
-            }
-            original?(c)
-        }
     }
 
     /// Re-sync the Search-segment overlay's state. See `refreshAutoSegmentAppearance`.
@@ -650,32 +633,10 @@ class AppearanceTab: NSObject {
         SettingsWindow.shared.beginSheetWithSearchHighlight(animationsSheet)
     }
 
-    /// Re-sync the Auto-segment overlay's state (badge + icon/label color). Called on click,
-    /// Pro-lock transitions, programmatic resync, and window key-state changes.
+    /// Re-sync the Auto-segment overlay's state (badge + icon/label color).
     private static func refreshAutoSegmentAppearance(_ segmentedControl: NSSegmentedControl) {
         guard let overlay = autoSegmentOverlayRef else { return }
         refreshTrailingSegmentBadge(segmentedControl, proIndex: AppearanceSizePreference.allCases.count - 1, overlay: overlay)
-    }
-
-    /// Wraps the segmented control's onAction so clicks on the Pro-only `.auto` segment are
-    /// redirected to the Upgrade tab while Pro is locked, instead of writing the preference.
-    private static func wrapAppearanceSizeProLockIntercept(_ segmentedControl: NSSegmentedControl) {
-        let autoIndex = AppearanceSizePreference.allCases.count - 1
-        let original = segmentedControl.onAction
-        segmentedControl.onAction = { control in
-            let segmented = control as! NSSegmentedControl
-            if segmented.selectedSegment == autoIndex && LicenseManager.shared.isProLocked {
-                let stored: AppearanceSizePreference = CachedUserDefaults.macroPref("appearanceSize", AppearanceSizePreference.allCases)
-                segmented.selectedSegment = stored.index
-                // We bail before `original` fires, so the overlay's selection-sync (which
-                // normally runs in the `extraAction`) never executes. Trigger it manually so the
-                // badge and label colors track the reset selection.
-                refreshAutoSegmentAppearance(segmented)
-                UpgradeTab.navigateToUpgradeTab()
-                return
-            }
-            original?(control)
-        }
     }
 
     static func addProBadgeToAutoSegment(_ segmentedControl: NSSegmentedControl) -> ProBadgeView.SegmentOverlay {

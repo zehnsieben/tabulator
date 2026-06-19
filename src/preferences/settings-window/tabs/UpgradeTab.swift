@@ -270,7 +270,7 @@ class UpgradeTab {
     }
 
     static func openAccountPage() {
-        NSWorkspace.shared.open(URL(string: Endpoints.accountUrl)!)
+        return
     }
 
     private static func presentActivationSheet(prefilledKey: String = "", autoFailedHint: Bool = false) {

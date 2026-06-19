@@ -504,6 +504,8 @@ class SettingsWindow: NSWindow {
     private func setupUpgradeButton(_ parent: NSView) {
         upgradeButton.target = self
         upgradeButton.action = #selector(upgradeButtonClicked)
+        upgradeButton.isHidden = true
+        upgradeButton.isEnabled = false
         upgradeButton.translatesAutoresizingMaskIntoConstraints = false
         parent.addSubview(upgradeButton)
         // Align with the sidebar source-list highlight: the scroll view sits flush against the
@@ -520,7 +522,7 @@ class SettingsWindow: NSWindow {
     }
 
     @objc private func upgradeButtonClicked() {
-        showUpgradeView()
+        return
     }
 
     private func setupQuitButton(_ parent: NSView) {
@@ -1117,35 +1119,7 @@ class SettingsWindow: NSWindow {
     }
 
     func showUpgradeView() {
-        guard !isShowingUpgradeView else { return }
-        isShowingUpgradeView = true
-        sidebarTableView.deselectAll(nil)
-        selectedSectionId = nil
-        sectionsStackBottomConstraint.isActive = false
-        sectionsStack.isHidden = true
-        if upgradeContentView == nil {
-            let view = UpgradeTab.initTab()
-            view.translatesAutoresizingMaskIntoConstraints = false
-            sectionsDocumentView.addSubview(view)
-            let bottomConstraint = view.bottomAnchor.constraint(equalTo: sectionsDocumentView.bottomAnchor, constant: -Self.contentBottomPadding)
-            NSLayoutConstraint.activate([
-                view.topAnchor.constraint(equalTo: sectionsDocumentView.topAnchor, constant: Self.contentTopPadding + Self.topSectionTitlePadding),
-                view.leadingAnchor.constraint(equalTo: sectionsDocumentView.leadingAnchor, constant: Self.contentHorizontalPadding + Self.sectionContentHorizontalMargin),
-                view.trailingAnchor.constraint(lessThanOrEqualTo: sectionsDocumentView.trailingAnchor, constant: -(Self.contentTrailingPadding + Self.sectionContentHorizontalMargin)),
-                bottomConstraint,
-            ])
-            upgradeViewBottomConstraint = bottomConstraint
-            upgradeContentView = view
-        } else {
-            UpgradeTab.refreshStatus()
-        }
-        upgradeViewBottomConstraint?.isActive = true
-        upgradeContentView?.isHidden = false
-        isProgrammaticScrollInProgress = true
-        defer { isProgrammaticScrollInProgress = false }
-        rightScrollView.contentView.scroll(to: .zero)
-        rightScrollView.reflectScrolledClipView(rightScrollView.contentView)
-        lastContentScrollY = 0
+        return
     }
 
     private func hideUpgradeView() {
@@ -1240,15 +1214,8 @@ extension SettingsWindow: NSWindowDelegate {
     func windowDidBecomeKey(_ notification: Notification) {
         // Trial day count is baked into `LicenseManager.state` and only recomputed on reassignment.
         // Refresh before the user reads the upgrade button / upgrade tab so the day count is current.
-        LicenseManager.shared.refreshState()
-        if isShowingUpgradeView {
-            UpgradeTab.refreshStatus()
-        }
         guard !hasPlayedShine else { return }
         hasPlayedShine = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            self?.upgradeButton.playShineAnimation()
-        }
     }
 
     func windowWillClose(_ notification: Notification) {

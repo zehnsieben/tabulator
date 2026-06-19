@@ -15,39 +15,22 @@ class AboutTab {
             BoldLabel(App.name),
             NSTextField(wrappingLabelWithString: NSLocalizedString("Version", comment: "") + " " + App.version),
             NSTextField(wrappingLabelWithString: App.licence),
-            HyperlinkLabel(NSLocalizedString("Website", comment: ""), Endpoints.website),
-            HyperlinkLabel(NSLocalizedString("Source code", comment: ""), App.repository),
+            NSTextField(wrappingLabelWithString: App.repository),
         ], .vertical)
         appText.spacing = GridView.interPadding / 2
-        let rowToSeparate = 3
-        appText.views[rowToSeparate].topAnchor.constraint(equalTo: appText.views[rowToSeparate - 1].bottomAnchor, constant: GridView.interPadding).isActive = true
         let appInfo = NSStackView(views: [appIcon, appText])
         appIcon.translatesAutoresizingMaskIntoConstraints = false
         appInfo.spacing = GridView.interPadding
         appInfo.alignment = .centerY
-        let supportProject = makeSupportProjectButton()
-        let rows = [[appInfo], [supportProject]]
+        let rows = [[appInfo]]
         let grid = GridView(rows, 0)
         if centerHero {
             grid.cell(atColumnIndex: 0, rowIndex: 0).xPlacement = .center
         }
-        let supportProjectCell = grid.cell(atColumnIndex: 0, rowIndex: showFeedbackButton ? 2 : 1)
-        supportProjectCell.xPlacement = .center
         if fitToContent {
             grid.fit()
         }
         return grid
-    }
-
-    static func makeSupportProjectButton() -> NSButton {
-        let button = makeButtonWithIcon(NSLocalizedString("Support this project", comment: ""), App.supportProjectAction, "heart.fill", .red, App.self)
-        styleSupportProjectButton(button)
-        return button
-    }
-
-    private static func styleSupportProjectButton(_ button: NSButton) {
-        button.bezelStyle = .rounded
-        button.translatesAutoresizingMaskIntoConstraints = false
     }
 
     private static func makeButtonWithIcon(_ title: String, _ selector: Selector, _ symbolName: String?, _ color: NSColor? = nil, _ target: AnyObject? = nil) -> NSButton {
